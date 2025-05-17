@@ -45,6 +45,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
+import java.util.logging.Level;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -489,8 +490,9 @@ public final class QuickItem {
         assert meta != null;
 
         try {
-            XSkull.of(meta).profile(Profileable.of(player)).lenient().apply();
+            XSkull.of(meta).profile(Profileable.of(player)).applyAsync().join();
         } catch (Exception ignored) {
+            Bukkit.getLogger().log(Level.WARNING, ignored.getMessage());
             meta.setOwningPlayer(player);
         }
 
