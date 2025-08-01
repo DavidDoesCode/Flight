@@ -29,8 +29,10 @@ import com.cryptomorin.xseries.profiles.objects.Profileable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.utils.DataFixerUtil;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.OfflinePlayer;
@@ -536,6 +538,7 @@ public final class QuickItem {
         return SerializeUtil.itemsToString(items);
     }
 
+    @SneakyThrows
     public static ItemStack getItem(String string) {
         return SerializeUtil.stringToItem(string);
     }

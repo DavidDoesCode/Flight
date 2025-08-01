@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Crypto Morin
+ * Copyright (c) 2025 Crypto Morin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@
  */
 package ca.tweetzy.flight.comp.enums;
 
-import com.cryptomorin.xseries.XItemStack;
+import com.cryptomorin.xseries.XEntityType;
 import com.cryptomorin.xseries.base.XBase;
 import com.cryptomorin.xseries.base.annotations.XChange;
 import com.cryptomorin.xseries.base.annotations.XInfo;
@@ -33,6 +33,7 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
@@ -41,7 +42,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,9 +75,8 @@ import java.util.stream.Collectors;
  * <b>/give @p minecraft:dirt 1 10</b> where 1 is the item amount, and 10 is the data value. The material {@link #DIRT} with a data value of {@code 10} doesn't exist.
  *
  * @author Crypto Morin
- * @version 12.0.0
+ * @version 12.0.1
  * @see Material
- * @see XItemStack
  * @see ItemStack
  */
 public enum CompMaterial implements XBase<CompMaterial, Material> {
@@ -211,6 +218,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     BLACK_CONCRETE_POWDER(15, "CONCRETE_POWDER"),
     @XInfo(since = "1.14") BLACK_DYE(0, "INK_SACK", "INK_SAC"),
     BLACK_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    BLACK_HARNESS,
     BLACK_SHULKER_BOX,
     BLACK_STAINED_GLASS(15, "STAINED_GLASS"),
     BLACK_STAINED_GLASS_PANE(15, "STAINED_GLASS_PANE"),
@@ -234,6 +243,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     @XInfo(since = "1.21.5")
     BLUE_EGG,
     BLUE_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    BLUE_HARNESS,
     BLUE_ICE,
     BLUE_ORCHID(1, "RED_ROSE"),
     BLUE_SHULKER_BOX,
@@ -278,6 +289,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     @XInfo(since = "1.21.5")
     BROWN_EGG,
     BROWN_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    BROWN_HARNESS,
     BROWN_MUSHROOM,
     BROWN_MUSHROOM_BLOCK("BROWN_MUSHROOM", "HUGE_MUSHROOM_1"),
     BROWN_SHULKER_BOX,
@@ -473,6 +486,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     CYAN_CONCRETE_POWDER(9, "CONCRETE_POWDER"),
     CYAN_DYE(6, "INK_SACK"),
     CYAN_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    CYAN_HARNESS,
     CYAN_SHULKER_BOX,
     CYAN_STAINED_GLASS(9, "STAINED_GLASS"),
     CYAN_STAINED_GLASS_PANE(9, "STAINED_GLASS_PANE"),
@@ -577,6 +592,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     DRAGON_EGG,
     DRAGON_HEAD(5, "SKULL", "SKULL_ITEM"),
     DRAGON_WALL_HEAD(5, "SKULL", "SKULL_ITEM"),
+    @XInfo(since = "1.21.6")
+    DRIED_GHAST,
     DRIED_KELP,
     DRIED_KELP_BLOCK,
     DRIPSTONE_BLOCK,
@@ -714,6 +731,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     GRAY_CONCRETE_POWDER(7, "CONCRETE_POWDER"),
     GRAY_DYE(8, "INK_SACK"),
     GRAY_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    GRAY_HARNESS,
     GRAY_SHULKER_BOX,
     GRAY_STAINED_GLASS(7, "STAINED_GLASS"),
     GRAY_STAINED_GLASS_PANE(7, "THIN_GLASS", "STAINED_GLASS_PANE"),
@@ -734,6 +753,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
      */
     GREEN_DYE(2, "INK_SACK", "CACTUS_GREEN"),
     GREEN_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    GREEN_HARNESS,
     GREEN_SHULKER_BOX,
     GREEN_STAINED_GLASS(13, "STAINED_GLASS"),
     GREEN_STAINED_GLASS_PANE(13, "THIN_GLASS", "STAINED_GLASS_PANE"),
@@ -746,6 +767,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     GUSTER_BANNER_PATTERN,
     GUSTER_POTTERY_SHERD,
     HANGING_ROOTS,
+    @XInfo(since = "1.21.6")
+    HAPPY_GHAST_SPAWN_EGG,
     HAY_BLOCK,
     HEARTBREAK_POTTERY_SHERD,
     HEART_OF_THE_SEA,
@@ -859,6 +882,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     LIGHT_BLUE_CONCRETE_POWDER(3, "CONCRETE_POWDER"),
     LIGHT_BLUE_DYE(12, "INK_SACK"),
     LIGHT_BLUE_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    LIGHT_BLUE_HARNESS,
     LIGHT_BLUE_SHULKER_BOX,
     LIGHT_BLUE_STAINED_GLASS(3, "STAINED_GLASS"),
     LIGHT_BLUE_STAINED_GLASS_PANE(3, "THIN_GLASS", "STAINED_GLASS_PANE"),
@@ -879,6 +904,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
      * Renamed to LIGHT_GRAY_GLAZED_TERRACOTTA in 1.14
      */
     LIGHT_GRAY_GLAZED_TERRACOTTA("SILVER_GLAZED_TERRACOTTA"),
+    @XInfo(since = "1.21.6")
+    LIGHT_GRAY_HARNESS,
     LIGHT_GRAY_SHULKER_BOX("SILVER_SHULKER_BOX"),
     LIGHT_GRAY_STAINED_GLASS(8, "STAINED_GLASS"),
     LIGHT_GRAY_STAINED_GLASS_PANE(8, "THIN_GLASS", "STAINED_GLASS_PANE"),
@@ -899,6 +926,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     LIME_CONCRETE_POWDER(5, "CONCRETE_POWDER"),
     LIME_DYE(10, "INK_SACK"),
     LIME_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    LIME_HARNESS,
     LIME_SHULKER_BOX,
     LIME_STAINED_GLASS(5, "STAINED_GLASS"),
     LIME_STAINED_GLASS_PANE(5, "STAINED_GLASS_PANE"),
@@ -920,6 +949,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     MAGENTA_CONCRETE_POWDER(2, "CONCRETE_POWDER"),
     MAGENTA_DYE(13, "INK_SACK"),
     MAGENTA_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    MAGENTA_HARNESS,
     MAGENTA_SHULKER_BOX,
     MAGENTA_STAINED_GLASS(2, "STAINED_GLASS"),
     MAGENTA_STAINED_GLASS_PANE(2, "THIN_GLASS", "STAINED_GLASS_PANE"),
@@ -997,6 +1028,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     MUSIC_DISC_CREATOR,
     MUSIC_DISC_CREATOR_MUSIC_BOX,
     MUSIC_DISC_FAR("RECORD_5"),
+    @XInfo(since = "1.21.7")
+    MUSIC_DISC_LAVA_CHICKEN,
     MUSIC_DISC_MALL("RECORD_6"),
     MUSIC_DISC_MELLOHI("RECORD_7"),
     MUSIC_DISC_OTHERSIDE,
@@ -1005,6 +1038,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     MUSIC_DISC_RELIC,
     MUSIC_DISC_STAL("RECORD_8"),
     MUSIC_DISC_STRAD("RECORD_9"),
+    @XInfo(since = "1.21.6")
+    MUSIC_DISC_TEARS,
     MUSIC_DISC_WAIT("RECORD_12"),
     MUSIC_DISC_WARD("RECORD_10"),
     MUTTON,
@@ -1080,6 +1115,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     ORANGE_CONCRETE_POWDER(1, "CONCRETE_POWDER"),
     ORANGE_DYE(14, "INK_SACK"),
     ORANGE_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    ORANGE_HARNESS,
     ORANGE_SHULKER_BOX,
     ORANGE_STAINED_GLASS(1, "STAINED_GLASS"),
     ORANGE_STAINED_GLASS_PANE(1, "STAINED_GLASS_PANE"),
@@ -1147,6 +1184,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     PINK_CONCRETE_POWDER(6, "CONCRETE_POWDER"),
     PINK_DYE(9, "INK_SACK"),
     PINK_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    PINK_HARNESS,
     PINK_PETALS,
     PINK_SHULKER_BOX,
     PINK_STAINED_GLASS(6, "STAINED_GLASS"),
@@ -1277,6 +1316,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     PURPLE_CONCRETE_POWDER(10, "CONCRETE_POWDER"),
     PURPLE_DYE(5, "INK_SACK"),
     PURPLE_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    PURPLE_HARNESS,
     PURPLE_SHULKER_BOX,
     PURPLE_STAINED_GLASS(10, "STAINED_GLASS"),
     PURPLE_STAINED_GLASS_PANE(10, "THIN_GLASS", "STAINED_GLASS_PANE"),
@@ -1301,6 +1342,7 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     RAIL("RAILS"),
     RAISER_ARMOR_TRIM_SMITHING_TEMPLATE,
     RAVAGER_SPAWN_EGG,
+
     RAW_COPPER,
     RAW_COPPER_BLOCK,
     RAW_GOLD,
@@ -1331,7 +1373,6 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
      * Data value 14 or 0
      */
     RED_BED(supports(12) ? 14 : 0, "BED_BLOCK", "BED"),
-
     RED_BUNDLE,
     RED_CANDLE,
     RED_CANDLE_CAKE,
@@ -1342,6 +1383,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     @XChange(version = "1.13", from = "INK_SACK", to = "ROSE_RED")
     RED_DYE(1, "INK_SACK", "ROSE_RED"),
     RED_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    RED_HARNESS,
     RED_MUSHROOM,
     RED_MUSHROOM_BLOCK("RED_MUSHROOM", "HUGE_MUSHROOM_2"),
     RED_NETHER_BRICKS("RED_NETHER_BRICK"),
@@ -1706,6 +1749,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     WHITE_CONCRETE_POWDER("CONCRETE_POWDER"),
     @XInfo(since = "1.14") WHITE_DYE,
     WHITE_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    WHITE_HARNESS,
     WHITE_SHULKER_BOX,
     WHITE_STAINED_GLASS("STAINED_GLASS"),
     WHITE_STAINED_GLASS_PANE("THIN_GLASS", "STAINED_GLASS_PANE"),
@@ -1737,6 +1782,7 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     YELLOW_BUNDLE,
     YELLOW_CANDLE,
     YELLOW_CANDLE_CAKE,
+
     YELLOW_CARPET(4, "CARPET"),
     YELLOW_CONCRETE(4, "CONCRETE"),
     YELLOW_CONCRETE_POWDER(4, "CONCRETE_POWDER"),
@@ -1746,6 +1792,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
      */
     YELLOW_DYE(11, "INK_SACK", "DANDELION_YELLOW"),
     YELLOW_GLAZED_TERRACOTTA,
+    @XInfo(since = "1.21.6")
+    YELLOW_HARNESS,
     YELLOW_SHULKER_BOX,
     YELLOW_STAINED_GLASS(4, "STAINED_GLASS"),
     YELLOW_STAINED_GLASS_PANE(4, "THIN_GLASS", "STAINED_GLASS_PANE"),
@@ -1758,7 +1806,9 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     ZOMBIE_SPAWN_EGG(54, "MONSTER_EGG"),
     ZOMBIE_VILLAGER_SPAWN_EGG(27, "MONSTER_EGG"),
     ZOMBIE_WALL_HEAD(2, "SKULL", "SKULL_ITEM"),
-    ZOMBIFIED_PIGLIN_SPAWN_EGG(57, "MONSTER_EGG", "ZOMBIE_PIGMAN_SPAWN_EGG");
+    ZOMBIFIED_PIGLIN_SPAWN_EGG(57, "MONSTER_EGG", "ZOMBIE_PIGMAN_SPAWN_EGG"),
+
+    ;
 
 
     /**
@@ -1973,8 +2023,8 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     @SuppressWarnings("OptionalAssignedToNull")
     @NotNull
     public static Optional<CompMaterial> matchCompMaterial(@NotNull String name) {
-        if (name == null || name.isEmpty())
-            throw new IllegalArgumentException("Cannot match a material with null or empty material name");
+        if (name == null)
+            throw new IllegalArgumentException("Cannot match a material with null string");
         Optional<CompMaterial> oldMatch = matchCompMaterialWithData(name);
         return oldMatch != null ? oldMatch : matchDefinedCompMaterial(format(name), UNKNOWN_DATA_VALUE);
     }
@@ -2020,7 +2070,16 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof SpawnEggMeta) {
                 SpawnEggMeta egg = (SpawnEggMeta) meta;
-                material = egg.getSpawnedType().name() + "_SPAWN_EGG";
+
+                // https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSpawnEgg.java?until=fb4564cc37c37a19a8920025de6bb19dbf852338&untilPath=src%2Fmain%2Fjava%2Forg%2Fbukkit%2Fcraftbukkit%2Finventory%2FCraftMetaSpawnEgg.java#113-120
+                // Can be null
+                EntityType type = egg.getSpawnedType();
+                if (type != null) {
+                    material = egg.getSpawnedType().name() + "_SPAWN_EGG";
+                } else {
+                    // We don't have a monster egg with ID 0
+                    return CompMaterial.ZOMBIE_SPAWN_EGG;
+                }
             }
         }
 
@@ -2267,6 +2326,17 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     }
 
     /**
+     * Create a wool from dye of certain amount.
+     */
+    public static ItemStack makeWool(final Color color, final int amount) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13))
+            return new ItemStack(Material.valueOf(DyeColor.getByColor(color) + "_WOOL"), amount);
+
+        else
+            return new ItemStack(Material.valueOf("WOOL"), amount, DyeColor.getByColor(color).getWoolData());
+    }
+
+    /**
      * Parses an item from this CompMaterial.
      * Uses data values on older versions.
      *
@@ -2283,6 +2353,18 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
         // Splash Potions weren't an official material pre-flattening.
         if (!Data.ISFLAT && this == SPLASH_POTION) {
             base.setDurability((short) 16384); // Hard-coded as 'data' is only a byte.
+        }
+        if (supports(9) && !supports(13) && base.hasItemMeta() && this.name().endsWith("_SPAWN_EGG")) {
+            ItemMeta meta = base.getItemMeta();
+            if (meta instanceof SpawnEggMeta) {
+                SpawnEggMeta egg = (SpawnEggMeta) meta;
+                String entityName = this.name();
+                egg.setSpawnedType(XEntityType
+                        .of(entityName.substring(0, entityName.length() - "_SPAWN_EGG".length()))
+                        .orElse(XEntityType.ZOMBIE)
+                        .get()
+                );
+            }
         }
         return base;
     }
@@ -2317,6 +2399,42 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
         }
         return Data.ISFLAT || item.getDurability() == this.data || item.getType().getMaxDurability() > 0;
     }
+
+    /**
+     * Return true if the given block is air
+     */
+    public static boolean isAir(final Block block) {
+        return block == null || isAir(block.getType());
+    }
+
+    /**
+     * Returns if the given item stack is air
+     */
+    public static boolean isAir(@Nullable ItemStack item) {
+        if (item == null)
+            return true;
+
+        return isAir(item.getType());
+    }
+
+    /**
+     * Returns if the given material is air
+     */
+    public static boolean isAir(final Material material) {
+        return material == null || nameEquals(material, "AIR", "CAVE_AIR", "VOID_AIR", "LEGACY_AIR");
+    }
+
+    // Utility method for evaluating matches.
+    private static boolean nameEquals(final Material mat, final String... names) {
+        final String matName = mat.toString();
+
+        for (final String name : names)
+            if (matName.equals(name))
+                return true;
+
+        return false;
+    }
+
 
     @Override
     public String[] getNames() {
@@ -2385,53 +2503,6 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
     }
 
     /**
-     * Return true if the given block is air
-     */
-    public static boolean isAir(final Block block) {
-        return block == null || isAir(block.getType());
-    }
-
-    /**
-     * Returns if the given item stack is air
-     */
-    public static boolean isAir(@Nullable ItemStack item) {
-        if (item == null)
-            return true;
-
-        return isAir(item.getType());
-    }
-
-    /**
-     * Returns if the given material is air
-     */
-    public static boolean isAir(final Material material) {
-        return material == null || nameEquals(material, "AIR", "CAVE_AIR", "VOID_AIR", "LEGACY_AIR");
-    }
-
-    // Utility method for evaluating matches.
-    private static boolean nameEquals(final Material mat, final String... names) {
-        final String matName = mat.toString();
-
-        for (final String name : names)
-            if (matName.equals(name))
-                return true;
-
-        return false;
-    }
-
-
-    /**
-     * Create a wool from dye of certain amount.
-     */
-    public static ItemStack makeWool(final Color color, final int amount) {
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13))
-            return new ItemStack(Material.valueOf(DyeColor.getByColor(color) + "_WOOL"), amount);
-
-        else
-            return new ItemStack(Material.valueOf("WOOL"), amount, DyeColor.getByColor(color).getWoolData());
-    }
-
-    /**
      * Used for data that need to be accessed during enum initialization.
      *
      * @since 9.0.0
@@ -2486,7 +2557,7 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
                 // noinspection unchecked
                 mapping = (Map<String, Material>) field.get(null);
             } catch (Throwable e) {
-                new RuntimeException("Unable to get Material.BY_NAME field", e).printStackTrace();
+                new IllegalStateException("Unable to get Material.BY_NAME field", e).printStackTrace();
                 mapping = null;
             }
 

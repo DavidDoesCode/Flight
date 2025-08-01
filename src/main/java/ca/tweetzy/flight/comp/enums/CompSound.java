@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Crypto Morin
+ * Copyright (c) 2025 Crypto Morin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,31 +21,11 @@
  */
 package ca.tweetzy.flight.comp.enums;
 
-/*
- * The MIT License (MIT)
- *
- * Copyright (c) 2024 Crypto Morin
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
 import com.cryptomorin.xseries.base.XModule;
 import com.cryptomorin.xseries.base.XRegistry;
 import com.cryptomorin.xseries.base.annotations.XChange;
 import com.cryptomorin.xseries.base.annotations.XInfo;
+import com.cryptomorin.xseries.base.annotations.XMerge;
 import com.google.common.base.Enums;
 import com.google.common.base.Strings;
 import org.bukkit.*;
@@ -68,6 +48,7 @@ import java.util.stream.Collectors;
  * <p>
  * Sounds are thread-safe. But this doesn't mean you should
  * use a bukkit async scheduler for every {@link Player#playSound} call.
+ * Paper for some reason blocks async calls for playing sounds in a world.
  * <p>
  * <b>Volume:</b> 0.0-∞ - 1.0f (normal) - Using higher values increase the distance from which the sound can be heard.<br>
  * <b>Pitch:</b> 0.5-2.0 - 1.0f (normal) - How fast the sound is play.
@@ -78,7 +59,7 @@ import java.util.stream.Collectors;
  * play command: <a href="https://minecraft.wiki/w/Commands/play">minecraft.wiki/w</a>
  *
  * @author Crypto Morin
- * @version 11.0.0
+ * @version 11.0.1
  * @see Sound
  */
 public final class CompSound extends XModule<CompSound, Sound> {
@@ -392,8 +373,13 @@ public final class CompSound extends XModule<CompSound, Sound> {
             MUSIC_NETHER_BASALT_DELTAS = std("music.nether.basalt_deltas", "MUSIC_NETHER"),
             UI_BUTTON_CLICK = std("ui.button.click", "CLICK"),
             WEATHER_RAIN = std("weather.rain", "AMBIENCE_RAIN"),
-            AMBIENT_CAVE = std("ambient.cave", "AMBIENCE_CAVE"),
-            ENTITY_EXPERIENCE_ORB_PICKUP = std("entity.experience_orb.pickup", "ORB_PICKUP"),
+            AMBIENT_CAVE = std("ambient.cave", "AMBIENCE_CAVE");
+
+    @XMerge(since = "1.9", version = "1.12?", name = "ENTITY_EXPERIENCE_ORB_TOUCH")
+    public static final CompSound
+            ENTITY_EXPERIENCE_ORB_PICKUP = std("entity.experience_orb.pickup", "ORB_PICKUP");
+
+    public static final CompSound
             AMBIENT_BASALT_DELTAS_ADDITIONS = std("ambient.basalt_deltas.additions"),
             AMBIENT_BASALT_DELTAS_LOOP = std("ambient.basalt_deltas.loop"),
             AMBIENT_BASALT_DELTAS_MOOD = std("ambient.basalt_deltas.mood"),
@@ -1818,6 +1804,46 @@ public final class CompSound extends XModule<CompSound, Sound> {
             ENTITY_WOLF_SAD_PANT = std("entity.wolf_sad.pant"),
             ENTITY_WOLF_SAD_WHINE = std("entity.wolf_sad.whine");
 
+    @XInfo(since = "1.21.6")
+    public static final CompSound
+            BLOCK_DRIED_GHAST_AMBIENT = std("block.dried_ghast.ambient"),
+            BLOCK_DRIED_GHAST_AMBIENT_WATER = std("block.dried_ghast.ambient_water"),
+            BLOCK_DRIED_GHAST_BREAK = std("block.dried_ghast.break"),
+            BLOCK_DRIED_GHAST_FALL = std("block.dried_ghast.fall"),
+            BLOCK_DRIED_GHAST_PLACE = std("block.dried_ghast.place"),
+            BLOCK_DRIED_GHAST_PLACE_IN_WATER = std("block.dried_ghast.place_in_water"),
+            BLOCK_DRIED_GHAST_STEP = std("block.dried_ghast.step"),
+            BLOCK_DRIED_GHAST_TRANSITION = std("block.dried_ghast.transition"),
+            BLOCK_DRY_GRASS_AMBIENT = std("block.dry_grass.ambient"),
+            ENTITY_GHASTLING_AMBIENT = std("entity.ghastling.ambient"),
+            ENTITY_GHASTLING_DEATH = std("entity.ghastling.death"),
+            ENTITY_GHASTLING_HURT = std("entity.ghastling.hurt"),
+            ENTITY_GHASTLING_SPAWN = std("entity.ghastling.spawn"),
+            ENTITY_HAPPY_GHAST_AMBIENT = std("entity.happy_ghast.ambient"),
+            ENTITY_HAPPY_GHAST_DEATH = std("entity.happy_ghast.death"),
+            ENTITY_HAPPY_GHAST_EQUIP = std("entity.happy_ghast.equip"),
+            ENTITY_HAPPY_GHAST_HARNESS_GOGGLES_DOWN = std("entity.happy_ghast.harness_goggles_down"),
+            ENTITY_HAPPY_GHAST_HARNESS_GOGGLES_UP = std("entity.happy_ghast.harness_goggles_up"),
+            ENTITY_HAPPY_GHAST_HURT = std("entity.happy_ghast.hurt"),
+            ENTITY_HAPPY_GHAST_RIDING = std("entity.happy_ghast.riding"),
+            ENTITY_HAPPY_GHAST_UNEQUIP = std("entity.happy_ghast.unequip"),
+            ITEM_HORSE_ARMOR_UNEQUIP = std("item.horse_armor.unequip"),
+            ITEM_LEAD_BREAK = std("item.lead.break"),
+            ITEM_LEAD_TIED = std("item.lead.tied"),
+            ITEM_LEAD_UNTIED = std("item.lead.untied"),
+            ITEM_LLAMA_CARPET_UNEQUIP = std("item.llama_carpet.unequip"),
+            ITEM_SADDLE_UNEQUIP = std("item.saddle.unequip"),
+            ITEM_SHEARS_SNIP = std("item.shears.snip"),
+            MUSIC_DISC_TEARS = std("music_disc.tears");
+
+    @XInfo(since = "1.21.7")
+    public static final CompSound
+            MUSIC_DISC_LAVA_CHICKEN = std("music_disc.lava_chicken");
+
+    static {
+        REGISTRY.discardMetadata();
+    }
+
     /**
      * A list of sounds that are labelled as <a href="https://minecraft.fandom.com/wiki/Music">"music"</a> (usually longer than 30 seconds)
      *
@@ -2218,7 +2244,7 @@ public final class CompSound extends XModule<CompSound, Sound> {
                         Player.class.getDeclaredMethod("playSound", Location.class, Sound.class, float.class, float.class);
                         level = 1;
                     } catch (Throwable eee) {
-                        throw new RuntimeException("None of sound methods are supported", eee);
+                        throw new UnsupportedOperationException("None of sound methods are supported", eee);
                     }
                 }
             }
@@ -2428,7 +2454,7 @@ public final class CompSound extends XModule<CompSound, Sound> {
      *
      * @since 3.0.0
      */
-    public static final class Record implements Cloneable {
+    public static final class Record {
         private static final Random RANDOM = new Random();
 
         private Object sound;
@@ -2561,9 +2587,7 @@ public final class CompSound extends XModule<CompSound, Sound> {
                     '}';
         }
 
-        @SuppressWarnings("MethodDoesntCallSuperMethod")
-        @Override
-        public Record clone() {
+        public Record copy() {
             Record record = new Record();
             record.sound = sound;
             record.volume = volume;
