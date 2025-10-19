@@ -491,11 +491,19 @@ public final class QuickItem {
 
         assert meta != null;
 
-        try {
-            XSkull.of(meta).profile(Profileable.of(player)).apply();
-        } catch (Exception ignored) {
-            Bukkit.getLogger().log(Level.WARNING, ignored.getMessage());
+        // Check if this is a Bedrock player (Geyser/Floodgate adds a dot prefix)
+        boolean isBedrockPlayer = player.getName() != null && player.getName().startsWith(".");
+
+        // For Bedrock players, skip XSkull and use direct setOwningPlayer to avoid API lookup failures
+        if (isBedrockPlayer) {
             meta.setOwningPlayer(player);
+        } else {
+            try {
+                XSkull.of(meta).profile(Profileable.of(player)).apply();
+            } catch (Exception ignored) {
+                Bukkit.getLogger().log(Level.WARNING, ignored.getMessage());
+                meta.setOwningPlayer(player);
+            }
         }
 
         itemStack.setItemMeta(meta);
