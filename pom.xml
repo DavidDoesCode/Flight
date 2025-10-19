@@ -6,7 +6,7 @@
 
     <groupId>ca.tweetzy</groupId>
     <artifactId>flight</artifactId>
-    <version>3.38.0</version>
+    <version>3.38.1</version>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
 
