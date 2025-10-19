@@ -485,6 +485,15 @@ public final class QuickItem {
         return new QuickItem().material(mat);
     }
 
+    /**
+     * Create a player head synchronously. This method should be avoided when loading multiple heads.
+     * Use {@link #asyncPlayerHead(OfflinePlayer)} instead to prevent server lockups.
+     *
+     * @param player the player to create a head for
+     * @return QuickItem builder with the player head
+     * @deprecated Use {@link #asyncPlayerHead(OfflinePlayer)} for better performance
+     */
+    @Deprecated
     public static QuickItem of(final OfflinePlayer player) {
         final ItemStack itemStack = CompMaterial.PLAYER_HEAD.parseItem();
         final SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
@@ -508,6 +517,47 @@ public final class QuickItem {
 
         itemStack.setItemMeta(meta);
         return of(itemStack);
+    }
+
+    /**
+     * Create a player head asynchronously. Returns immediately with a placeholder head,
+     * then updates to the actual player head once loaded.
+     *
+     * @param player the player to create a head for
+     * @return CompletableFuture that completes with the player's head ItemStack
+     */
+    public static CompletableFuture<ItemStack> asyncPlayerHead(final OfflinePlayer player) {
+        final ItemStack itemStack = CompMaterial.PLAYER_HEAD.parseItem();
+
+        // Check if this is a Bedrock player (Geyser/Floodgate adds a dot prefix)
+        boolean isBedrockPlayer = player.getName() != null && player.getName().startsWith(".");
+
+        // For Bedrock players, use simple setOwningPlayer (no async needed, no API calls)
+        if (isBedrockPlayer) {
+            final SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+            if (meta != null) {
+                meta.setOwningPlayer(player);
+                itemStack.setItemMeta(meta);
+            }
+            return CompletableFuture.completedFuture(itemStack);
+        }
+
+        // For Java players, use XSkull async with fallback
+        return XSkull
+                .of(itemStack)
+                .profile(Profileable.of(player))
+                .lenient()
+                .applyAsync()
+                .exceptionally(ex -> {
+                    // On error, fallback to basic setOwningPlayer
+                    Bukkit.getLogger().log(Level.WARNING, "Failed to load skull for " + player.getName() + ", using fallback");
+                    final SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+                    if (meta != null) {
+                        meta.setOwningPlayer(player);
+                        itemStack.setItemMeta(meta);
+                    }
+                    return itemStack;
+                });
     }
 
     public static CompletableFuture<ItemStack> asyncTexturedHead(String url) {
