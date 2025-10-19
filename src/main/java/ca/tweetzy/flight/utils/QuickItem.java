@@ -505,7 +505,7 @@ public final class QuickItem {
     public static CompletableFuture<ItemStack> asyncTexturedHead(String url) {
         return XSkull
                 .of(CompMaterial.PLAYER_HEAD.parseItem())
-                .profile(Profileable.detect(url))
+                .profile(Profileable.of(ProfileInputType.TEXTURE_URL, url))
                 .fallback(Profileable.of(ProfileInputType.TEXTURE_URL, fallbackTexture))
                 .lenient()
                 .applyAsync();
@@ -521,7 +521,7 @@ public final class QuickItem {
 
         XSkull
                 .of(sm)
-                .profile(Profileable.detect(url))
+                .profile(Profileable.of(ProfileInputType.TEXTURE_URL, url))
                 .fallback(Profileable.of(ProfileInputType.TEXTURE_URL, fallbackTexture))
                 .lenient()
                 .apply();
