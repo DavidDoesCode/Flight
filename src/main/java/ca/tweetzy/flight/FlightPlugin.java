@@ -21,6 +21,7 @@ package ca.tweetzy.flight;
 import ca.tweetzy.flight.config.tweetzy.TweetzyYamlConfig;
 import ca.tweetzy.flight.database.DataManagerAbstract;
 import ca.tweetzy.flight.utils.Common;
+import ca.tweetzy.flight.utils.PlayerHeadCache;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
@@ -88,6 +89,10 @@ public abstract class FlightPlugin extends JavaPlugin implements Listener {
         try {
             coreConfig = new TweetzyYamlConfig(this, "config.yml");
 
+            // Initialize player head cache
+            console.sendMessage(Common.colorize("&8[#00ce74FlightCore&8]#CBCBCB Initializing player head cache..."));
+            PlayerHeadCache.init(this);
+
             onFlight();
 
             if (emergencyStop) {
@@ -121,6 +126,15 @@ public abstract class FlightPlugin extends JavaPlugin implements Listener {
         if (this.emergencyStop) {
             return;
         }
+
+        // Shutdown player head cache
+        try {
+            PlayerHeadCache.getInstance().shutdown();
+            getLogger().info("Player head cache saved successfully");
+        } catch (Exception e) {
+            getLogger().log(Level.WARNING, "Failed to shutdown player head cache", e);
+        }
+
         onSleep();
     }
 

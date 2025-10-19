@@ -520,8 +520,8 @@ public final class QuickItem {
     }
 
     /**
-     * Create a player head asynchronously. Returns immediately with a placeholder head,
-     * then updates to the actual player head once loaded.
+     * Create a player head asynchronously with caching and rate limiting.
+     * Uses a 24-hour cache and limits concurrent API requests to prevent rate limiting.
      *
      * @param player the player to create a head for
      * @return CompletableFuture that completes with the player's head ItemStack
@@ -542,22 +542,44 @@ public final class QuickItem {
             return CompletableFuture.completedFuture(itemStack);
         }
 
-        // For Java players, use XSkull async with fallback
-        return XSkull
-                .of(itemStack)
-                .profile(Profileable.of(player))
-                .lenient()
-                .applyAsync()
-                .exceptionally(ex -> {
-                    // On error, fallback to basic setOwningPlayer
-                    Bukkit.getLogger().log(Level.WARNING, "Failed to load skull for " + player.getName() + ", using fallback");
-                    final SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
-                    if (meta != null) {
-                        meta.setOwningPlayer(player);
-                        itemStack.setItemMeta(meta);
-                    }
-                    return itemStack;
-                });
+        // Use cache with rate limiting for Java players
+        try {
+            return PlayerHeadCache.getInstance().getOrLoad(player.getUniqueId(), () -> {
+                // This loader is only called if not in cache
+                return XSkull
+                        .of(itemStack)
+                        .profile(Profileable.of(player))
+                        .lenient()
+                        .applyAsync()
+                        .exceptionally(ex -> {
+                            // On error, fallback to basic setOwningPlayer
+                            Bukkit.getLogger().log(Level.WARNING, "Failed to load skull for " + player.getName() + ", using fallback");
+                            final SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+                            if (meta != null) {
+                                meta.setOwningPlayer(player);
+                                itemStack.setItemMeta(meta);
+                            }
+                            return itemStack;
+                        });
+            });
+        } catch (IllegalStateException e) {
+            // Cache not initialized, fallback to non-cached version
+            Bukkit.getLogger().log(Level.WARNING, "PlayerHeadCache not initialized, using non-cached method");
+            return XSkull
+                    .of(itemStack)
+                    .profile(Profileable.of(player))
+                    .lenient()
+                    .applyAsync()
+                    .exceptionally(ex -> {
+                        Bukkit.getLogger().log(Level.WARNING, "Failed to load skull for " + player.getName() + ", using fallback");
+                        final SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+                        if (meta != null) {
+                            meta.setOwningPlayer(player);
+                            itemStack.setItemMeta(meta);
+                        }
+                        return itemStack;
+                    });
+        }
     }
 
     public static CompletableFuture<ItemStack> asyncTexturedHead(String url) {
