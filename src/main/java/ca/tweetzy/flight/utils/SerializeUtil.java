@@ -83,7 +83,7 @@ public final class SerializeUtil {
         return NBT.itemStackArrayToNBT(items).toString();
     }
 
-    public ItemStack stringToItem(final String string) {
+    public static ItemStack stringToItem(final String string) {
         return NBT.itemStackFromNBT(NBT.parseNBT(string));
     }
 
