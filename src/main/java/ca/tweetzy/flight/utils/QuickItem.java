@@ -492,7 +492,7 @@ public final class QuickItem {
         assert meta != null;
 
         try {
-            XSkull.of(meta).profile(Profileable.of(player)).applyAsync().join();
+            XSkull.of(meta).profile(Profileable.of(player)).apply();
         } catch (Exception ignored) {
             Bukkit.getLogger().log(Level.WARNING, ignored.getMessage());
             meta.setOwningPlayer(player);
