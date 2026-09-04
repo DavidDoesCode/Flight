@@ -18,13 +18,12 @@
 
 package ca.tweetzy.flight.utils.colors;
 
+import ca.tweetzy.flight.comp.enums.ServerVersion;
 import ca.tweetzy.flight.utils.colors.patterns.GradientColorPattern;
 import ca.tweetzy.flight.utils.colors.patterns.RainbowColorPattern;
 import ca.tweetzy.flight.utils.colors.patterns.SolidColorPattern;
 import com.google.common.collect.ImmutableMap;
 import net.md_5.bungee.api.ChatColor;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -42,7 +41,7 @@ import java.util.stream.Collectors;
  */
 public final class ColorFormatter {
 
-    private static final int VERSION = getVersion();
+    private static final int VERSION = ServerVersion.getFeatureVersion();
 
     private static final boolean SUPPORTS_RGB = VERSION >= 16;
 
@@ -305,32 +304,4 @@ public final class ColorFormatter {
         return COLORS.get(nearestColor);
     }
 
-    /**
-     * Gets a simplified major version (..., 9, 10, ..., 14).
-     * In most cases, you shouldn't be using this method.
-     *
-     * @return the simplified major version.
-     *
-     * @since 1.0.0
-     */
-    private static int getVersion() {
-        String version = Bukkit.getVersion();
-        Validate.notEmpty(version, "Cannot get major Minecraft version from null or empty string");
-
-        // getVersion()
-        int index = version.lastIndexOf("MC:");
-        if (index != -1) {
-            version = version.substring(index + 4, version.length() - 1);
-        } else if (version.endsWith("SNAPSHOT")) {
-            // getBukkitVersion()
-            index = version.indexOf('-');
-            version = version.substring(0, index);
-        }
-
-        // 1.13.2, 1.14.4, etc...
-        int lastDot = version.lastIndexOf('.');
-        if (version.indexOf('.') != lastDot) version = version.substring(0, lastDot);
-
-        return Integer.parseInt(version.substring(2));
-    }
 }

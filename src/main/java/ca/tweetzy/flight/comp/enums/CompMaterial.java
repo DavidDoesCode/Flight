@@ -51,8 +51,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -2525,11 +2523,7 @@ public enum CompMaterial implements XBase<CompMaterial, Material> {
                 System.err.println("Bukkit.getServer() in null. This should not happen when running a plugin normally");
                 VERSION = 21;
             } else {
-                String version = Bukkit.getVersion();
-                Matcher matcher = Pattern.compile("MC: \\d\\.(\\d+)").matcher(version);
-
-                if (matcher.find()) VERSION = Integer.parseInt(matcher.group(1));
-                else throw new IllegalArgumentException("Failed to parse server version from: " + version);
+                VERSION = ServerVersion.getFeatureVersion();
             }
         }
 

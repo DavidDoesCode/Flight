@@ -42,13 +42,45 @@ public enum ServerVersion {
     V1_20("1.20"),
     V1_21("1.21"),
     V1_22("1.22"),
-    V1_23("1.23");
+    V1_23("1.23"),
+    V26_1("26.1"),
+    V26_2("26.2");
 
     @Getter
     private final String versionName;
 
+    /**
+     * Minecraft version string such as {@code 1.21.4} or {@code 26.2}.
+     */
+    public static String getMinecraftVersionString() {
+        String version = Bukkit.getVersion();
+        if (version != null && !version.isEmpty()) {
+            int index = version.lastIndexOf("MC:");
+            if (index != -1) {
+                return version.substring(index + 4, version.length() - 1).trim();
+            }
+        }
+
+        String bukkitVersion = Bukkit.getBukkitVersion();
+        int dash = bukkitVersion.indexOf('-');
+        return dash == -1 ? bukkitVersion : bukkitVersion.substring(0, dash);
+    }
+
+    /**
+     * Number comparable to old 1.x minor versions.
+     * {@code 1.21.4} → {@code 21}, {@code 26.2} → {@code 26}.
+     */
+    public static int getFeatureVersion() {
+        String[] parts = getMinecraftVersionString().split("\\.");
+        int major = Integer.parseInt(parts[0]);
+        if (major == 1 && parts.length > 1) {
+            return Integer.parseInt(parts[1]);
+        }
+        return major;
+    }
+
     public static ServerVersion getVersion() {
-        String[] versionPkgRaw = Bukkit.getServer().getBukkitVersion().split("-")[0].split("\\.");
+        String[] versionPkgRaw = getMinecraftVersionString().split("\\.");
         String versionPkg = versionPkgRaw[0] + "." + versionPkgRaw[1];
 
         for (ServerVersion version : values()) {
